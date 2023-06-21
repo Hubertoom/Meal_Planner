@@ -40,8 +40,8 @@ public class Meal {
             return this;
         }
 
-        MealBuilder addIngredients(String ingredients) {
-            this.ingredients.addAll(Arrays.stream(ingredients.split(",")).toList());
+        MealBuilder addIngredients(List<String> ingredients) {
+            this.ingredients.addAll(ingredients);
             return this;
         }
 
