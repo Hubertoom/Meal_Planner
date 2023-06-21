@@ -1,18 +1,18 @@
 package mealplanner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Meal {
     private String name;
     private Category category;
-    private List<String> ingredients = new ArrayList<>();
-
-    private Meal(String name, Category category, List<String> ingredients) {
+    private List<String> ingredientsList;
+    private int meal_id;
+    private Meal(String name, Category category, List<String> ingredients, int meal_id) {
         this.name = name;
         this.category = category;
-        this.ingredients = ingredients;
+        this.ingredientsList = ingredients;
+        this.meal_id = meal_id;
     }
 
     @Override
@@ -20,13 +20,15 @@ public class Meal {
         return "Category: " + category.name().toLowerCase() +
                 "\nName: " + name +
                 "\nIngredients: " +
-                "\n" + String.join(System.lineSeparator(), ingredients);
+                "\n" + String.join(System.lineSeparator(), ingredientsList) +
+                "\n";
     }
 
     public static class MealBuilder {
         private String name;
         private Category category;
         private List<String> ingredients = new ArrayList<>();
+        private int meal_id;
 
         MealBuilder() {}
 
@@ -40,14 +42,34 @@ public class Meal {
             return this;
         }
 
-        MealBuilder addIngredients(List<String> ingredients) {
+        MealBuilder addIngredientsList(List<String> ingredients) {
             this.ingredients.addAll(ingredients);
             return this;
         }
 
+        MealBuilder setMealId(int meal_id) {
+            this.meal_id = meal_id;
+            return this;
+        }
+
         Meal build() {
-            return new Meal(name, category, ingredients);
+            return new Meal(name, category, ingredients, meal_id);
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getCategory() {
+        return category.name();
+    }
+
+    public List<String> getIngredientsList() {
+        return ingredientsList;
+    }
+
+    public int getMeal_id() {
+        return meal_id;
+    }
 }

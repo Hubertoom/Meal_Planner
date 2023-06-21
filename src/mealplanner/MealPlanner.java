@@ -4,10 +4,20 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class MealPlanner {
-    private final List<Meal> meals = new ArrayList<>();
-    private final Scanner scanner = new Scanner(System.in);
+    private final List<Meal> mealsList;
+    private final Scanner scanner;
+    private int meal_id;
+    private final DBManagement dbManagement;
+
+    public MealPlanner() {
+        this.scanner = new Scanner(System.in);
+        this.meal_id = 0;
+        this.dbManagement = new DBManagement();
+        mealsList = dbManagement.retrieveMealList();
+    }
 
     public void run() {
+
         while (true) {
             System.out.println("What would you like to do (add, show, exit)?");
             String userRequest = scanner.nextLine();
@@ -16,8 +26,9 @@ public class MealPlanner {
                 case "add" -> addMeal();
                 case "show" -> show();
                 case "exit" -> {
-                    System.out.println("Bye!");
                     scanner.close();
+                    dbManagement.closeConnection();
+                    System.out.println("Bye!");
                     return;
                 }
             }
@@ -25,12 +36,11 @@ public class MealPlanner {
     }
 
     private void show() {
-        if (meals.isEmpty()) {
+        if (mealsList.isEmpty()) {
             System.out.println("No meals saved. Add a meal first.");
         } else {
-            meals.forEach(System.out::println);
+            mealsList.forEach(System.out::println);
         }
-        System.out.println();
     }
 
     private void addMeal() {
@@ -41,11 +51,17 @@ public class MealPlanner {
         Meal meal = new Meal.MealBuilder()
                 .setCategory(category)
                 .setName(name)
-                .addIngredients(ingredients)
+                .addIngredientsList(ingredients)
+                .setMealId(meal_id)
                 .build();
 
         System.out.println("The meal has been added!");
-        meals.add(meal);
+        meal_id++;
+
+        dbManagement.addMeal(meal);
+        dbManagement.addIngredients(meal);
+
+        mealsList.add(meal);
     }
 
     private Category readCategory() {
@@ -55,7 +71,7 @@ public class MealPlanner {
         System.out.println("Which meal do you want to add (breakfast, lunch, dinner)?");
 
         while (!isCategoryCorrect) {
-            String userCategoryChoice = scanner.nextLine().toUpperCase();
+            String userCategoryChoice = scanner.nextLine();
 
             for (Category mealCategory : Category.values()) {
                 if (mealCategory.name().equals(userCategoryChoice)) {
