@@ -34,12 +34,14 @@ public class DBManagement {
 
     public int getLastMealId() {
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM meals;");
-            resultSet.next();
-            return resultSet.getInt("count");
+            ResultSet resultSet = statement.executeQuery("SELECT MAX(meal_id) AS meal_id FROM meals;");
+            if (resultSet.next()) {
+                return resultSet.getInt("meal_id");
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return 0;
     }
 
     public void addMeal(Meal meal) {
