@@ -61,20 +61,20 @@ public class DBManagement {
         }
     }
 
-    public List<Meal> retrieveMealList() {
+    public List<Meal> retrieveMealList(String category) {
         List<Meal> mealList = new ArrayList<>();
-        String category;
         String name;
-        List<String> ingredientsList = new ArrayList<>();
         int meal_id;
 
         try (Statement statementForMeals = connection.createStatement()) {
             ResultSet resultSetMeal = statementForMeals.executeQuery(
-                    "SELECT * FROM meals;"
+                    String.format("SELECT * FROM meals " +
+                            "WHERE category = '%s' " +
+                            "ORDER BY meal_id;", category)
             );
 
             while (resultSetMeal.next()) {
-                category = resultSetMeal.getString("category");
+                List<String> ingredientsList = new ArrayList<>();
                 name = resultSetMeal.getString("meal");
                 meal_id = resultSetMeal.getInt("meal_id");
 
@@ -82,26 +82,25 @@ public class DBManagement {
                     ResultSet resultSetIngredients = statementForIngredients.executeQuery(
                             String.format(
                                     "SELECT * FROM ingredients " +
-                                            "WHERE meal_id = %d;", meal_id
+                                            "WHERE meal_id = %d " +
+                                            "ORDER BY ingredient_id;", meal_id
                             ));
                     while (resultSetIngredients.next()) {
                         ingredientsList.add(resultSetIngredients.getString("ingredient"));
                     }
+                    mealList.add(
+                            new Meal.MealBuilder()
+                                    .setCategory(Category.valueOf(category))
+                                    .setName(name)
+                                    .setMealId(meal_id)
+                                    .addIngredientsList(ingredientsList)
+                                    .build()
+                    );
                 }
-
-                mealList.add(
-                        new Meal.MealBuilder()
-                                .setCategory(Category.valueOf(category))
-                                .setName(name)
-                                .setMealId(meal_id)
-                                .addIngredientsList(ingredientsList)
-                                .build()
-                );
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return mealList;
     }
 

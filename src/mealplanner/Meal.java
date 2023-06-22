@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Meal {
-    private String name;
-    private Category category;
-    private List<String> ingredientsList;
-    private int meal_id;
+    private final String name;
+    private final Category category;
+    private final List<String> ingredientsList;
+    private final int meal_id;
     private Meal(String name, Category category, List<String> ingredients, int meal_id) {
         this.name = name;
         this.category = category;
@@ -17,8 +17,7 @@ public class Meal {
 
     @Override
     public String toString() {
-        return "Category: " + category.name().toLowerCase() +
-                "\nName: " + name +
+        return "Name: " + name +
                 "\nIngredients: " +
                 "\n" + String.join(System.lineSeparator(), ingredientsList) +
                 "\n";
@@ -27,7 +26,7 @@ public class Meal {
     public static class MealBuilder {
         private String name;
         private Category category;
-        private List<String> ingredients = new ArrayList<>();
+        private final List<String> ingredients = new ArrayList<>();
         private int meal_id;
 
         MealBuilder() {}

@@ -4,16 +4,13 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class MealPlanner {
-    private final List<Meal> mealsList;
     private final Scanner scanner;
-    private int meal_id;
+    private static int meal_id;
     private final DBManagement dbManagement;
 
     public MealPlanner() {
         this.scanner = new Scanner(System.in);
-        this.meal_id = 0;
         this.dbManagement = new DBManagement();
-        mealsList = dbManagement.retrieveMealList();
     }
 
     public void run() {
@@ -36,12 +33,27 @@ public class MealPlanner {
     }
 
     private void show() {
-        if (mealsList.isEmpty()) {
-            System.out.println("No meals saved. Add a meal first.");
-        } else {
-            mealsList.forEach(System.out::println);
+        List<Meal> retrievedMeals;
+
+        System.out.println("Which category do you want to print (breakfast, lunch, dinner)?");
+        String category = scanner.nextLine();
+        while (true) {
+            if (Pattern.matches("^(breakfast|lunch|dinner)$", category)) {
+                retrievedMeals = new ArrayList<>(dbManagement.retrieveMealList(category));
+                break;
+            } else {
+                System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
+                category = scanner.nextLine();
+            }
+
         }
-    }
+        if (retrievedMeals.isEmpty()) {
+            System.out.println("No meals found.");
+        } else {
+            System.out.printf("Category: %s\n\n", category);
+            retrievedMeals.forEach(System.out::println);
+        }
+}
 
     private void addMeal() {
         Category category = readCategory();
@@ -60,8 +72,6 @@ public class MealPlanner {
 
         dbManagement.addMeal(meal);
         dbManagement.addIngredients(meal);
-
-        mealsList.add(meal);
     }
 
     private Category readCategory() {
@@ -91,7 +101,7 @@ public class MealPlanner {
     private String readMealName() {
         System.out.println("Input the meal's name:");
         String name = scanner.nextLine();
-        while (!Pattern.matches("([a-zA-Z]+\\s*){1,}", name)) {
+        while (!Pattern.matches("([a-zA-Z]+\\s*)+", name)) {
             System.out.println("Wrong format. Use letters only!");
             name = scanner.nextLine();
         }
@@ -107,7 +117,7 @@ public class MealPlanner {
             ingredients = Arrays.stream(input.split(",")).toList();
 
             Optional<String> isInputCorrect = ingredients.stream()
-                    .filter(element -> !Pattern.matches("(\\s*[a-zA-Z]+\\s*){1,}", element))
+                    .filter(element -> !Pattern.matches("(\\s*[a-zA-Z]+\\s*)+", element))
                     .findAny();
 
             if (isInputCorrect.isEmpty()) {
