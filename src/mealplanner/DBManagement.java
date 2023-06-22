@@ -32,6 +32,16 @@ public class DBManagement {
         }
     }
 
+    public int getLastMealId() {
+        try (Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM meals;");
+            resultSet.next();
+            return resultSet.getInt("count");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void addMeal(Meal meal) {
         try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(

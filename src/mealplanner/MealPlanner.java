@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 public class MealPlanner {
     private final Scanner scanner;
-    private static int meal_id;
     private final DBManagement dbManagement;
 
     public MealPlanner() {
@@ -56,6 +55,7 @@ public class MealPlanner {
 }
 
     private void addMeal() {
+        int meal_id = dbManagement.getLastMealId() + 1;
         Category category = readCategory();
         String name = readMealName();
         List<String> ingredients = readIngredients();
@@ -68,7 +68,6 @@ public class MealPlanner {
                 .build();
 
         System.out.println("The meal has been added!");
-        meal_id++;
 
         dbManagement.addMeal(meal);
         dbManagement.addIngredients(meal);
