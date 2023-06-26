@@ -27,11 +27,9 @@ public class DbClient {
 
     public List<Meal> selectAsList(String query) {
         List<Meal> mealsList = new ArrayList<>();
-
         try (Connection connection = dataSource.getConnection()
-        ){
+        ) {
             Statement statement = connection.createStatement();
-            System.out.println(query);
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 List<String> ingredientsList = new ArrayList<>();
@@ -66,7 +64,7 @@ public class DbClient {
 
     public int getLastId(String query) {
         try (Connection connection = dataSource.getConnection();
-                Statement statement = connection.createStatement()) {
+             Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(query);
             if (resultSet.next()) {
                 return resultSet.getInt("meal_id");
@@ -75,5 +73,20 @@ public class DbClient {
             throw new RuntimeException(e);
         }
         return 0;
+    }
+
+    public List<String> selectNamesOfMealsAsList(String query) {
+        List<String> mealsList = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement()
+        ) {
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                mealsList.add(resultSet.getString("meal"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return mealsList;
     }
 }

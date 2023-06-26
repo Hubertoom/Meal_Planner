@@ -3,8 +3,9 @@ package mealplanner;
 import java.util.List;
 
 public interface MealDao {
-    List<Meal> findAllByCategory(String category);
+    List<Meal> findAllByCategory(String category, String orderBy);
 
+    List<String> findAllByDay(String day);
     Meal findById(int id);
 
     void addMeal(Meal meal);
@@ -15,4 +16,7 @@ public interface MealDao {
     void deleteById(int id);
 
     int getLastMealId();
+
+    void addMealToPlan(String day, String category, Meal meal);
+
 }

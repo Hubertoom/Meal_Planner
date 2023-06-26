@@ -14,12 +14,13 @@ public class MealPlanner {
 
     public void run() {
         while (true) {
-            System.out.println("What would you like to do (add, show, exit)?");
+            System.out.println("What would you like to do (add, show, plan, exit)?");
             String userRequest = scanner.nextLine();
 
             switch (userRequest) {
                 case "add" -> addMeal();
                 case "show" -> show();
+                case "plan" -> plan();
                 case "exit" -> {
                     scanner.close();
                    // mealDao.closeConnection();
@@ -30,6 +31,48 @@ public class MealPlanner {
         }
     }
 
+    private void plan() {
+        List<String> daysOfWeek = List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+        for (String dayOfWeek : daysOfWeek) {
+            addMealForCurrentDay(dayOfWeek);
+            System.out.println();
+        }
+        showPlan();
+    }
+
+    private void showPlan() {
+        List<String> daysOfWeek = List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
+        for (String day : daysOfWeek) {
+            List<String> retrievedMeals = new ArrayList<>(mealDao.findAllByDay(day));
+            System.out.println(day);
+            for (int i = 0; i < retrievedMeals.size() - 2; i++) {
+                System.out.println("Breakfast: " + retrievedMeals.get(i));
+                System.out.println("Lunch: " + retrievedMeals.get(i + 1));
+                System.out.println("Dinner: " + retrievedMeals.get(i + 2));
+            }
+            System.out.println();
+        }
+    }
+    private void addMealForCurrentDay(String dayOfWeek) {
+        System.out.println(dayOfWeek);
+        for (Category category : Category.values()) {
+            List<Meal> retrievedMeal = new ArrayList<>(mealDao.findAllByCategory(category.name(), "meal"));
+            retrievedMeal.forEach(meal -> System.out.println(meal.getName()));
+            System.out.printf("Choose the %s for %s from the list above:\n", category.name(), dayOfWeek);
+
+            while (true) {
+                String mealName = scanner.nextLine();
+                Optional<Meal> meal = retrievedMeal.stream().filter(name -> name.getName().equals(mealName)).findFirst();
+                if (meal.isPresent()) {
+                    mealDao.addMealToPlan(dayOfWeek, category.name(), meal.get());
+                    break;
+                }
+                System.out.println("This meal doesn’t exist. Choose a meal from the list above.");
+            }
+        }
+        System.out.printf("Yeah! We planned the meals for %s.\n", dayOfWeek);
+    }
+
     private void show() {
         List<Meal> retrievedMeals;
 
@@ -37,7 +80,7 @@ public class MealPlanner {
         String category = scanner.nextLine();
         while (true) {
             if (Pattern.matches("^(breakfast|lunch|dinner)$", category)) {
-                retrievedMeals = new ArrayList<>(mealDao.findAllByCategory(category));
+                retrievedMeals = new ArrayList<>(mealDao.findAllByCategory(category, "meal_id"));
                 break;
             } else {
                 System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
@@ -67,7 +110,7 @@ public class MealPlanner {
                 .build();
 
         System.out.println("The meal has been added!");
-
+        System.out.println();
         mealDao.addMeal(meal);
     }
 
