@@ -14,13 +14,14 @@ public class MealPlanner {
 
     public void run() {
         while (true) {
-            System.out.println("What would you like to do (add, show, plan, exit)?");
+            System.out.println("What would you like to do (add, show, plan, save, exit)?");
             String userRequest = scanner.nextLine();
 
             switch (userRequest) {
                 case "add" -> addMeal();
                 case "show" -> show();
                 case "plan" -> plan();
+                case "save" -> save();
                 case "exit" -> {
                     scanner.close();
                     System.out.println("Bye!");
@@ -28,6 +29,11 @@ public class MealPlanner {
                 }
             }
         }
+    }
+
+    private void save() {
+        Map<String, Integer> listOfIngredients = mealDao.getListOfIngredients();
+        
     }
 
     private void plan() {

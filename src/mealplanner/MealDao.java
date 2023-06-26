@@ -1,6 +1,7 @@
 package mealplanner;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MealDao {
     List<Meal> findAllByCategory(String category, String orderBy);
@@ -13,4 +14,6 @@ public interface MealDao {
     int getLastMealId();
 
     void addMealToPlan(String day, String category, Meal meal);
+
+    Map<String, Integer> getListOfIngredients();
 }

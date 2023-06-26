@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DbClient {
     private final DataSource dataSource;
@@ -88,5 +90,21 @@ public class DbClient {
             throw new RuntimeException(e);
         }
         return mealsList;
+    }
+
+    public Map<String, Integer> getListOfIngredients(String query) {
+        Map<String, Integer> listOfIngredients = new HashMap<>();
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                String ingredientName = resultSet.getString("ingredient");
+                int occurrence = resultSet.getInt("occurrence");
+                listOfIngredients.put(ingredientName, occurrence);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return listOfIngredients;
     }
 }

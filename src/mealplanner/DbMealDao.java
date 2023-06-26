@@ -3,6 +3,7 @@ package mealplanner;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import java.util.List;
+import java.util.Map;
 
 public class DbMealDao implements MealDao {
     final String DB_NAME = "meals_db";
@@ -40,6 +41,11 @@ public class DbMealDao implements MealDao {
     private static final String SELECT_MEAL_BY_DAY = "SELECT meal from meals " +
             "INNER JOIN plan ON meals.meal_id = plan.meal_id " +
             "WHERE plan.day = '%s';";
+    private static final String SELECT_INGREDIENTS_FROM_PLAN = "SELECT ingredients.ingredient, COUNT(ingredients.ingredient) " +
+            "AS occurrences FROM plan " +
+            "INNER JOIN meals ON meals.meal_Id = plan.meal_id " +
+            "INNER JOIN ingredients ON plan.meal_id = ingredients.meal_id " +
+            "GROUP BY ingredients.ingredient;";
 
     public DbMealDao() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
@@ -93,5 +99,10 @@ public class DbMealDao implements MealDao {
         dbClient.run(String.format(
                 INSERT_MEAL_INTO_PLAN, day, category, meal.getMeal_id()
         ));
+    }
+
+    @Override
+    public Map<String, Integer> getListOfIngredients() {
+        return dbClient.getListOfIngredients(SELECT_INGREDIENTS_FROM_PLAN);
     }
 }
