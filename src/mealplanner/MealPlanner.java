@@ -5,15 +5,14 @@ import java.util.regex.Pattern;
 
 public class MealPlanner {
     private final Scanner scanner;
-    private final DBManagement dbManagement;
+    private final MealDao mealDao;
 
     public MealPlanner() {
         this.scanner = new Scanner(System.in);
-        this.dbManagement = new DBManagement();
+        this.mealDao = new DbMealDao();
     }
 
     public void run() {
-
         while (true) {
             System.out.println("What would you like to do (add, show, exit)?");
             String userRequest = scanner.nextLine();
@@ -23,7 +22,7 @@ public class MealPlanner {
                 case "show" -> show();
                 case "exit" -> {
                     scanner.close();
-                    dbManagement.closeConnection();
+                   // mealDao.closeConnection();
                     System.out.println("Bye!");
                     return;
                 }
@@ -38,7 +37,7 @@ public class MealPlanner {
         String category = scanner.nextLine();
         while (true) {
             if (Pattern.matches("^(breakfast|lunch|dinner)$", category)) {
-                retrievedMeals = new ArrayList<>(dbManagement.retrieveMealList(category));
+                retrievedMeals = new ArrayList<>(mealDao.findAllByCategory(category));
                 break;
             } else {
                 System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
@@ -55,7 +54,7 @@ public class MealPlanner {
 }
 
     private void addMeal() {
-        int meal_id = dbManagement.getLastMealId() + 1;
+        int meal_id = mealDao.getLastMealId() + 1;
         Category category = readCategory();
         String name = readMealName();
         List<String> ingredients = readIngredients();
@@ -69,8 +68,7 @@ public class MealPlanner {
 
         System.out.println("The meal has been added!");
 
-        dbManagement.addMeal(meal);
-        dbManagement.addIngredients(meal);
+        mealDao.addMeal(meal);
     }
 
     private Category readCategory() {
