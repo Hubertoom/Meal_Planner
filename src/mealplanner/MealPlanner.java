@@ -23,7 +23,6 @@ public class MealPlanner {
                 case "plan" -> plan();
                 case "exit" -> {
                     scanner.close();
-                   // mealDao.closeConnection();
                     System.out.println("Bye!");
                     return;
                 }
@@ -32,18 +31,16 @@ public class MealPlanner {
     }
 
     private void plan() {
-        List<String> daysOfWeek = List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-        for (String dayOfWeek : daysOfWeek) {
-            addMealForCurrentDay(dayOfWeek);
+        for (DaysOfWeek dayOfWeek : DaysOfWeek.values()) {
+            addMealForCurrentDay(dayOfWeek.name());
             System.out.println();
         }
         showPlan();
     }
 
     private void showPlan() {
-        List<String> daysOfWeek = List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
-        for (String day : daysOfWeek) {
-            List<String> retrievedMeals = new ArrayList<>(mealDao.findAllByDay(day));
+        for (DaysOfWeek day : DaysOfWeek.values()) {
+            List<String> retrievedMeals = new ArrayList<>(mealDao.findAllByDay(day.name()));
             System.out.println(day);
             for (int i = 0; i < retrievedMeals.size() - 2; i++) {
                 System.out.println("Breakfast: " + retrievedMeals.get(i));
@@ -130,7 +127,6 @@ public class MealPlanner {
                     break;
                 }
             }
-
             if (!isCategoryCorrect) {
                 System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
             }
@@ -168,5 +164,4 @@ public class MealPlanner {
         }
         return ingredients;
     }
-
 }

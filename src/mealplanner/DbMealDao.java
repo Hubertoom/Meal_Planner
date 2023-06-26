@@ -5,7 +5,6 @@ import org.postgresql.ds.PGSimpleDataSource;
 import java.util.List;
 
 public class DbMealDao implements MealDao {
-    final String DB_URL = "jdbc:postgresql:meals_db";
     final String DB_NAME = "meals_db";
     final String USER = "postgres";
     final String PASS = "1111";
@@ -28,8 +27,7 @@ public class DbMealDao implements MealDao {
             "meal_id INTEGER" +
             ")";
     private static final String INSERT_MEAL = "INSERT INTO meals (category, meal, meal_id) " +
-            "VALUES ('%s', '%s', %d)" +
-            ";";
+            "VALUES ('%s', '%s', %d);";
     private static final String INSERT_INGREDIENT = "INSERT INTO ingredients " +
             "VALUES ('%s', %d, %d)" +
             ";";
@@ -58,7 +56,6 @@ public class DbMealDao implements MealDao {
         dbClient.run(CRATE_PLAN_TABLE);
     }
 
-
     @Override
     public List<Meal> findAllByCategory(String category, String orderBy) {
         return dbClient.selectAsList(String.format(SELECT_ALL_BY_CATEGORY, category, orderBy));
@@ -68,11 +65,6 @@ public class DbMealDao implements MealDao {
     public List<String> findAllByDay(String day) {
         return dbClient.selectNamesOfMealsAsList(String.format(
                 SELECT_MEAL_BY_DAY, day));
-    }
-
-    @Override
-    public Meal findById(int id) {
-        return null;
     }
 
     @Override
@@ -91,16 +83,6 @@ public class DbMealDao implements MealDao {
         dbClient.run(String.format(
                 INSERT_INGREDIENT, name, index, meal_id
         ));
-    }
-
-    @Override
-    public void update(Meal meal) {
-
-    }
-
-    @Override
-    public void deleteById(int id) {
-
     }
 
     @Override
