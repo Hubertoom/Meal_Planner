@@ -4,7 +4,4 @@ repositories {
 
 dependencies {
     implementation "org.postgresql:postgresql:42.2.10"
-// https://mvnrepository.com/artifact/org.postgresql/postgresql
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
-
 }
