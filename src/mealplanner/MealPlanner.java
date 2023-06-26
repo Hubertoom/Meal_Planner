@@ -23,7 +23,6 @@ public class MealPlanner {
                 case "plan" -> plan();
                 case "exit" -> {
                     scanner.close();
-                   // mealDao.closeConnection();
                     System.out.println("Bye!");
                     return;
                 }

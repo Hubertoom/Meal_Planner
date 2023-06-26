@@ -28,14 +28,11 @@ public class DbMealDao implements MealDao {
             "meal_id INTEGER" +
             ")";
     private static final String INSERT_MEAL = "INSERT INTO meals (category, meal, meal_id) " +
-            "VALUES ('%s', '%s', %d)" +
-            ";";
+            "VALUES ('%s', '%s', %d);";
     private static final String INSERT_INGREDIENT = "INSERT INTO ingredients " +
-            "VALUES ('%s', %d, %d)" +
-            ";";
+            "VALUES ('%s', %d, %d);";
     private static final String INSERT_MEAL_INTO_PLAN = "INSERT INTO plan (day, category, meal_id) " +
-            "VALUES ('%s', '%s', %d)" +
-            ";";
+            "VALUES ('%s', '%s', %d);";
     private static final String SELECT_ALL_BY_CATEGORY = "SELECT * FROM meals " +
             "WHERE category = '%s' " +
             "ORDER BY %s;";
