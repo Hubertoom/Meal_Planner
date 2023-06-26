@@ -1,5 +1,9 @@
 package mealplanner;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -33,7 +37,25 @@ public class MealPlanner {
 
     private void save() {
         Map<String, Integer> listOfIngredients = mealDao.getListOfIngredients();
-        
+        if (listOfIngredients.isEmpty()) {
+            System.out.println("Unable to save. Plan your meals first.");
+            return;
+        }
+        System.out.println("Input a filename:");
+        File file = new File(scanner.nextLine());
+        try (FileWriter fileWriter = new FileWriter(file);
+             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)
+        ) {
+            for (Map.Entry<String, Integer> entry : listOfIngredients.entrySet()) {
+                String ingredient = entry.getKey();
+                int occurrence = entry.getValue();
+                bufferedWriter.write(ingredient + (occurrence < 2 ? "" : " x" + occurrence));
+                bufferedWriter.newLine();
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        System.out.println("Saved!");
     }
 
     private void plan() {

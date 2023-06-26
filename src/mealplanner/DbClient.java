@@ -99,7 +99,7 @@ public class DbClient {
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 String ingredientName = resultSet.getString("ingredient");
-                int occurrence = resultSet.getInt("occurrence");
+                int occurrence = resultSet.getInt("occurrences");
                 listOfIngredients.put(ingredientName, occurrence);
             }
         } catch (SQLException e) {
